@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(cuid())
+  name          String
+  email         String         @unique
+  password      String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id        String   @id @default(cuid())
+  userId    String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Signal {
+  id        String   @id @default(cuid())
+  symbol    String
+  type      String   // BUY or SELL
+  entry     Float
+  tp1       Float
+  tp2       Float
+  sl        Float
+  createdAt DateTime @default(now())
+  status    String   // ACTIVE, COMPLETED, FAILED
+}
+
